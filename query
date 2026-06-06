@@ -1,0 +1,66 @@
+! echo ".tables" | sqlite3 workouts.sqlite -cmd ".headers on" -cmd ".mode box"
+ingested  sets      workouts
+#~
+
+#!
+echo "
+    SELECT * FROM workouts
+
+" | sqlite3 workouts.sqlite -cmd ".headers on" -cmd ".mode box"
+#$
+┌──────────────────┬───────────────────────────────────────────────┐
+│       name       │                  description                  │
+├──────────────────┼───────────────────────────────────────────────┤
+│ 1000 ski push    │ - 1000km SkiErg                               │
+│                  │ - 4 laps sled push with 70lbs + 8 45lb plates │
+├──────────────────┼───────────────────────────────────────────────┤
+│ 100 balls 20lb   │ 100 wall balls with 20lbs as fast as you can  │
+├──────────────────┼───────────────────────────────────────────────┤
+│ 500 row 50 balls │ - 500m row                                    │
+│                  │ - 50 wall balls @ 12lbs                       │
+├──────────────────┼───────────────────────────────────────────────┤
+│ 500 row burpee   │ - 500m row                                    │
+│                  │ - 2 laps burpee broad jumps                   │
+├──────────────────┼───────────────────────────────────────────────┤
+│ alex cardio      │ - x2                                          │
+│                  │     - 1km run                                 │
+│                  │     - 500m ski                                │
+│                  │     - 1km run                                 │
+│                  │     - 500m row                                │
+│                  │ - 1km run                                     │
+└──────────────────┴───────────────────────────────────────────────┘
+#~
+
+
+! echo ".schema sets" | sqlite3 workouts.sqlite -cmd ".headers on" -cmd ".mode box"
+CREATE TABLE sets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    workout_name TEXT NOT NULL,
+    date INTEGER NOT NULL,
+    lap INTEGER NOT NULL,
+    total_time INTEGER NOT NULL,
+    difference INTEGER NOT NULL,
+    FOREIGN KEY (workout_name) REFERENCES workouts(name)
+);
+#~
+
+
+#!
+echo "
+   SELECT workout_name, COUNT(DISTINCT date) AS times_done
+   FROM sets
+   GROUP BY workout_name
+   ORDER BY times_done DESC;
+
+" | sqlite3 workouts.sqlite -cmd ".headers on" -cmd ".mode box"
+#$
+┌──────────────────┬────────────┐
+│   workout_name   │ times_done │
+├──────────────────┼────────────┤
+│ 500 row burpee   │ 3          │
+│ alex cardio      │ 1          │
+│ 500 row 50 balls │ 1          │
+│ 1000 ski push    │ 1          │
+│ 100 balls 20lb   │ 1          │
+└──────────────────┴────────────┘
+#~
