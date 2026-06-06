@@ -10,9 +10,28 @@
 #    - mix of strength lower reps and muscular endurance
 #    - can combine with intervals runs
 
+import argparse
 from math import floor, sqrt
 
 threshold_pace_min_per_km = 4 + 45/60
+
+
+def parse_pace(pace: str) -> float:
+    try:
+        minutes_str, seconds_str = pace.split(":", maxsplit=1)
+        minutes = int(minutes_str)
+        seconds = int(seconds_str)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(
+            f"invalid pace '{pace}'; expected M:SS"
+        ) from exc
+
+    if minutes < 0 or not 0 <= seconds < 60:
+        raise argparse.ArgumentTypeError(
+            f"invalid pace '{pace}'; seconds must be between 00 and 59"
+        )
+
+    return minutes + seconds / 60
 
 def pace_effort(pace: float, threshold: float) -> int:
     pace_velocity = 1 / pace
@@ -138,10 +157,19 @@ def workout_short_intervals_str(threshold: float) -> str:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--threshold",
+        type=parse_pace,
+        default=threshold_pace_min_per_km,
+        help="threshold pace in min/km, formatted as M:SS",
+    )
+    args = parser.parse_args()
+
     print("# Running workouts")
-    print(workout_tempo_str(threshold_pace_min_per_km))
-    print(workout_progressive_str(threshold_pace_min_per_km))
-    print(workout_race_intervals_str(threshold_pace_min_per_km))
-    print(workout_short_intervals_str(threshold_pace_min_per_km))
+    print(workout_tempo_str(args.threshold))
+    print(workout_progressive_str(args.threshold))
+    print(workout_race_intervals_str(args.threshold))
+    print(workout_short_intervals_str(args.threshold))
 #$
 
