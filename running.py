@@ -1,14 +1,4 @@
 #!/usr/bin/env python3
-# Sets
-# - slow long run 6-7 miles
-#- 3 different types of running
-#    - 1-2 slow long runs
-#    - 1 interval speed work
-#    - compromised running (hyrox specific)
-#- 2-3 strength sessions
-#    - mostly compound
-#    - mix of strength lower reps and muscular endurance
-#    - can combine with intervals runs
 
 import argparse
 from math import floor, sqrt
